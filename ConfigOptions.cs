@@ -26,6 +26,8 @@ public class ConfigOptions
     public TcpTmrServer TcpTmrServer { get; set; }
     public Directories Directories { get; set; }
     public DatabaseConnection DatabaseConnection { get; set; }
+    public Dbver Dbver { get; set; }
+    public TcpArcRecordReading TcpArcRecordReading { get; set; }
     public string Lkg {get => lkg();}
 
     private string lkg()
@@ -50,7 +52,7 @@ public class TcpConnectClient
     private string _serverIpAddr = "127.0.0.1";
     private int _clientPort = 22222;
     private int _servicePort = 22223;
-    private string _grpcOn = "off";
+    private string _grpcOn = "on";
     private string _portLog = "off";
     private int _timeWorkProxyLoc = TimeWorkProxyLocDefault;
     private int _timeWaitAnswear = TimeWaitAnswearDefault;
@@ -59,6 +61,7 @@ public class TcpConnectClient
 
     public bool IsGrpcOn => GrpcOn.Equals("on", StringComparison.InvariantCultureIgnoreCase);
 
+    // [MinLength(15)]
     public string LogLevel
     {
         get => _logLevel;
@@ -262,46 +265,47 @@ public class TcpTmrServer
     }
 
 
-    public int CloseLock
+    public int CloseLock    // 1 - закрывать замок; 0 - не закрывать замок
     {
-        get => _closeLock;
+        get => _closeLock is 0 or 1 ? _closeLock : 1;
         set => _closeLock = value;
     }
 
-    public int Capacity
+    public int Capacity // 1 - закрывать замок; 0 - не закрывать замок
     {
-        get => _capacity;
+        get => _capacity is 0 or 1 ? _capacity : 1;
         set => _capacity = value;
     }
 
-    public int TimeSynchro
+    public int TimeSynchro      // 1 - синхронизировать время; 0 - не синхронизировать время
     {
-        get => _timeSynchro;
+        get => _timeSynchro is 0 or 1 ? _timeSynchro : 1;
         set => _timeSynchro = value;
     }
 
     public int ChangeArc
     {
-        get => _changeArc;
+        get => _changeArc is 0 or 1 ? _changeArc : 1;
         set => _changeArc = value;
     }
 }
 
 public class Directories
 {
-    static string baseDirectoty = AppContext.BaseDirectory;
+    private static string baseDirectory = AppContext.BaseDirectory;
 
-    private string _arcDir = Path.Combine(baseDirectoty, "ArcDir");
+    private string _arcDir = Path.Combine(baseDirectory, "ArcDir");
     private string _tmrArcDir = "";
-    private string _logDir = Path.Combine(baseDirectoty, "LogDir");
-    private string _templateDir = Path.Combine(baseDirectoty, "TemplateDir");
+    private string _logDir = Path.Combine(baseDirectory, "LogDir");
+    private string _templateDir = Path.Combine(baseDirectory, "TemplateDir");
     private string _helpDir = "";
     private string _aupDir = "";
     private string _sgs_ModemIniFile = "";
-    private string _tcpTmrArcDir = Path.Combine(baseDirectoty, "TCPTmrArc");
-    private string _tcpArcDir = Path.Combine(baseDirectoty, "TCPArcDir");
+    private string _tcpTmrArcDir = Path.Combine(baseDirectory, "TCPTmrArc");
+    private string _tcpArcDir = Path.Combine(baseDirectory, "TCPArcDir");
     private string _fastDir = "";
 
+    public  string BaseDirectory { get => baseDirectory; set => baseDirectory =  value ; }
     public string ArcDir
     {
         get => _arcDir;
@@ -717,4 +721,36 @@ public class DatabaseConnection
     }
 
     
+}
+
+public class Dbver
+{
+    public string NEW_SGS_DB_VERSION { get; set; }
+    public string NEW_TMR_DB_VERSION { get; set; }
+    public string NEW_SRV_DB_VERSION { get; set; }
+    public string NEW_ALP_DB_VERSION { get; set; }
+    public string NEW_CONNECT_DB_VERSION { get; set; }
+   
+    //для TCP Connect
+    public string VersDbConnectPresent{ get; set; }
+   
+}
+
+public class TcpArcRecordReading
+{
+    public int ComplexHourArc { get; set; } = 20;
+    public int ComplexDayArc { get; set; } = 20;
+    public int ComplexTelemetryArc { get; set; } = 20;
+    public int ComplexChangeArc { get; set; } = 20;
+    public int ComplexSystemArc { get; set; } = 20;
+    public int SmartHourArc { get; set; } = 20;
+    public int SmartDayArc { get; set; } = 20;
+    public int SmartTelemetryArc { get; set; } = 20;
+    public int SmartChangeArc { get; set; } = 20;
+    public int SmartSystemArc { get; set; } = 20;
+    public int NewSmartHourArc { get; set; } = 20;
+    public int NewSmartDayArc { get; set; } = 20;
+    public int NewSmartTelemetryArc { get; set; } = 20;
+    public int NewSmartChangeArc { get; set; } = 20;
+    public int NewSmartSystemArc { get; set; } = 20;
 }
