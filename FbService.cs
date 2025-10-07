@@ -60,8 +60,8 @@ public class FbService
 
     //*****************************************************************************
 
-    public static async Task<DataTable>
-        ExecuteSqlGetDT(string sql, CancellationToken cToken,
+    public static async Task<(bool, DataTable)>
+        ExecuteSqlGetDt(string sql, CancellationToken cToken,
             string dbName = "conn") //переписано для уменьшения нагрузки на процессор, убрать коннекты
     {
         try
@@ -103,10 +103,10 @@ public class FbService
             if (isGet.Item2 is null)
             {
                 DataTable dt = new();
-                return dt;
+                return (isGet.Item1, dt);
             }
 
-            return (DataTable)isGet.Item2;
+            return (isGet.Item1, (DataTable)isGet.Item2);
         }
         catch (Exception ex)
         {
@@ -126,7 +126,7 @@ public class FbService
     /// <param name="sql">Запрос</param>
     /// <param name="dbName">Наименование базы: sgs/tmr/conn </param>
     /// <returns></returns>
-    public static async Task<T>
+    public static async Task<(bool, T)>
         ExecuteSqlGetOne<T>(string sql, CancellationToken cToken,
             string dbName = "conn") //переписано для уменьшения нагрузки на процессор, убрать коннекты
     {
@@ -173,17 +173,17 @@ public class FbService
             else
             {
                 // Log.WLog ( $"Результат запроса {g} НЕ получен." );
-                return noll;
+                return (isGet.Item1,  noll);
             }
 
             if (isGet.Item2 is null && (typeof(System.Int32) is T) || (typeof(System.Int64) is T))
             {
-                return (T)(isGet.Item2 ?? noll);
+                return (isGet.Item1, (T)(isGet.Item2 ?? noll));
             }
 
             if (isGet.Item2 is null && typeof(System.String) is T)
             {
-                return (T)(isGet.Item2 ?? "");
+                return (isGet.Item1, (T)(isGet.Item2 ?? ""));
             }
 
             // Log.DLog ( $"var t - type - {isGet.Item2?.GetType ( )}; value - {isGet.Item2}" );
@@ -191,11 +191,11 @@ public class FbService
             if (isGet.Item2?.GetType() == typeof(System.Int32))
             {
                 var intValue = (T)Convert.ChangeType(isGet.Item2, typeof(Int64));
-                return intValue;
+                return (isGet.Item1, intValue);
             }
 
 
-            return (T)(isGet.Item2 ?? noll);
+            return (isGet.Item1, (T)(isGet.Item2 ?? noll));
         }
         catch (Exception ex)
         {
@@ -208,13 +208,14 @@ public class FbService
     }
 
 
-    public static async Task<DataSet>
+    public static async Task<(bool, DataSet)>
         ExecuteSqlGetDs(string sql, CancellationToken cToken,
             string dbName = "conn") //переписано для уменьшения нагрузки на процессор, убрать коннекты
     {
+        Console.WriteLine($" sql = {sql}, dbName = {dbName}");
         try
         {
-            BlockingCollection<(string, Guid, string)> QSqlForExecuteAndGet = QSqlForExecuteAndGetConn;
+            // BlockingCollection<(string, Guid, string)> QSqlForExecuteAndGet = QSqlForExecuteAndGetConn;
 
             Guid g = Guid.NewGuid();
 
@@ -241,22 +242,28 @@ public class FbService
             (bool, object?) isGet;
 
             using var cts = new CancellationTokenSource(durationWaitFromDb);
-
+            var n = 1;
             do
             {
                 var delayTask = Task.Delay(delayCycleWaitDb, cToken);
                 delayTask.Wait();
 
+              
+                
                 isGet = GetResultGuidSqlExecutedAndGet(g);
+                
+                  Console.WriteLine($" n = {n}, isGet.Item1 = {isGet.Item1}, isGet.Item2 = {isGet.Item2} ");
+                                n++;
+                
             } while (!isGet.Item1 && !cts.IsCancellationRequested && !cToken.IsCancellationRequested);
 
             if (isGet.Item2 is null)
             {
                 DataSet ds = new();
-                return ds;
+                return (isGet.Item1, ds);
             }
 
-            return (DataSet)isGet.Item2;
+            return (isGet.Item1, (DataSet)isGet.Item2);
         }
         catch (Exception ex)
         {

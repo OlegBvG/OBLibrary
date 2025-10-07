@@ -1,5 +1,6 @@
 ﻿
 using System.ComponentModel.DataAnnotations;
+using System.Reflection;
 using FirebirdSql.Data.FirebirdClient;
 using Npgsql;
 
@@ -146,8 +147,8 @@ public class TcpConnectServer
     private int _timeAnswTmr = TimeAnswTmrDefault;
     private string _grpcOn = "on";
 
-    private bool _isTestMode = true;
-    private bool _isSgsManage = true;
+    private bool _isTestMode = false;
+    private bool _isSgsManage = false;
     [Url] private string _grpcAddress = "https://localhost:7062";
 
 
@@ -295,6 +296,8 @@ public class Directories
     private static string baseDirectory = AppContext.BaseDirectory;
 
     private string _arcDir = Path.Combine(baseDirectory, "ArcDir");
+    private string _arcDir2 = "";   //Path.Combine(baseDirectory, "ArcDir2");
+    private string _updateDir = Path.Combine(baseDirectory, "UpdateDir");
     private string _tmrArcDir = "";
     private string _logDir = Path.Combine(baseDirectory, "LogDir");
     private string _templateDir = Path.Combine(baseDirectory, "TemplateDir");
@@ -310,6 +313,22 @@ public class Directories
     {
         get => _arcDir;
         set => _arcDir = value;
+    }
+    public string ArcDir2
+    {
+        get => _arcDir2;
+        set => _arcDir2 = value;
+    }
+    
+    public bool IsArcDir2
+    {
+        get => !String.IsNullOrWhiteSpace(_arcDir2);
+       
+    }
+    public string UpdateDir
+    {
+        get => _updateDir;
+        set => _updateDir = value;
     }
 
     public string TmrArcDir
@@ -364,6 +383,30 @@ public class Directories
     {
         get => _fastDir;
         set => _fastDir = value;
+    }
+
+    public void CheckAndCreateDir()
+    {
+        Type directoriesType = this.GetType();
+        PropertyInfo[] properties = directoriesType.GetProperties();
+        // Loop through each property
+        foreach (PropertyInfo property in properties)
+        {
+            // Get the property name
+            string propertyName = property.Name;
+
+            // Get the property value
+            object propertyValue = property.GetValue(this);
+
+            // Display the property name and value
+            // if (propertyName is "ArcDir" or "ArcDir2" or "UpdateDir" or "LogDir" or "TemplateDir" or "HelpDir" or "AupDir" or "TCPTmrArcDir" or "TCPArcDir")
+            if (propertyName is "ArcDir" or "ArcDir2" or "LogDir" or "AupDir" or "TcpTmrArcDir" or "TcpArcDir")
+            {
+                Directory.CreateDirectory(propertyValue as string);
+            }
+            // Console.WriteLine($"---------- {propertyName}: {propertyValue}");
+            // Console.WriteLine($"{propertyName}: {propertyValue}");
+        }
     }
 }
 
