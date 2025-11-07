@@ -1,5 +1,6 @@
 ﻿
 using System.ComponentModel.DataAnnotations;
+using System.Data;
 using System.Reflection;
 using FirebirdSql.Data.FirebirdClient;
 using Npgsql;
@@ -29,7 +30,7 @@ public class ConfigOptions
     public DatabaseConnection DatabaseConnection { get; set; }
     public Dbver Dbver { get; set; }
     public TcpArcRecordReading TcpArcRecordReading { get; set; }
-    public string Lkg {get => lkg();}
+    public string Lkg => lkg();
 
     private string lkg()
     {
@@ -37,7 +38,8 @@ public class ConfigOptions
         var curentD2 = Directory.GetParent ( curentD )?.ToString ( ) ?? "";
         var parentD = Directory.GetParent ( curentD2 )?.ToString ( ) ?? "";
         var itsDir = Path.Combine(parentD, "SGS_ITS");
-        var pathLicFile = Path.Combine(itsDir, "sgs.lic");
+        var pathLicFile = Path.Combine(itsDir, "sgs.lic"); //todo - вернуть!!!!!!!!!!!!!!!!
+        // var pathLicFile = Path.Combine(@"C:\CWork\ConnectServiceN\TmrTcpServicePg\bin\Debug\SGS_ITS\", "sgs.lic");
 
         return CryptUtils.GetLKG(pathLicFile);
     }
@@ -307,6 +309,7 @@ public class Directories
     private string _tcpTmrArcDir = Path.Combine(baseDirectory, "TCPTmrArc");
     private string _tcpArcDir = Path.Combine(baseDirectory, "TCPArcDir");
     private string _fastDir = "";
+    private string _updateSMTDir = "";
 
     public  string BaseDirectory { get => baseDirectory; set => baseDirectory =  value ; }
     public string ArcDir
@@ -329,6 +332,12 @@ public class Directories
     {
         get => _updateDir;
         set => _updateDir = value;
+    }
+    
+    public string UpdateSMTDir
+    {
+        get => _updateSMTDir;
+        set => _updateSMTDir = value;
     }
 
     public string TmrArcDir
@@ -402,7 +411,8 @@ public class Directories
             // if (propertyName is "ArcDir" or "ArcDir2" or "UpdateDir" or "LogDir" or "TemplateDir" or "HelpDir" or "AupDir" or "TCPTmrArcDir" or "TCPArcDir")
             if (propertyName is "ArcDir" or "ArcDir2" or "LogDir" or "AupDir" or "TcpTmrArcDir" or "TcpArcDir")
             {
-                Directory.CreateDirectory(propertyValue as string);
+                if (propertyValue is string dir && !string.IsNullOrEmpty(dir) && !Directory.Exists(dir))
+                    Directory.CreateDirectory(dir);
             }
             // Console.WriteLine($"---------- {propertyName}: {propertyValue}");
             // Console.WriteLine($"{propertyName}: {propertyValue}");
@@ -422,6 +432,7 @@ public class DatabaseConnection
     private int _serverSgsPgDatabasePort = 5432;
     private string _serverSgsPgDatabaseLogin = "GazSetLogin";
     private string _serverSgsPgDatabasePassword = "masterGazSetLogin";
+    private NpgsqlConnection _npgsqlConnection;
 
 // #имя пользователя БД
 // #ConnectLogin=SYSDBA
@@ -628,6 +639,25 @@ public class DatabaseConnection
     // dataSourcePg = NpgsqlDataSource.Create ( connectionStringPg );
 
     public NpgsqlDataSource NpgsqlDataSource => NpgsqlDataSource.Create(ConnectionStringPg);
+    
+    public NpgsqlConnection NpgsqlConnection
+    {
+        get
+        {
+            if (_npgsqlConnection != null)
+                if (_npgsqlConnection.State is not (ConnectionState.Broken or ConnectionState.Closed))
+                    return _npgsqlConnection;
+
+            // if (_npgsqlConnection is { State: not (ConnectionState.Broken or ConnectionState.Closed) }) return _npgsqlConnection;
+
+            
+            _npgsqlConnection = new NpgsqlConnection(ConnectionStringPg);
+            _npgsqlConnection.Open();
+
+            return _npgsqlConnection;
+        }
+    }
+
 
     public bool IsPgDb
     {

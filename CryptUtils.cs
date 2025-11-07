@@ -728,6 +728,22 @@ namespace OBLibrary;
             }
 
 
+            public static string GetCRC32 ( byte[] buf )
+            {
+                try
+                {
+                    // byte [ ] buf = Encoding.ASCII.GetBytes ( STR );
+                    var crc = crc32 ( buf, buf.Length );
+
+                    return crc.ToString ( "X8" );
+                }
+                catch (Exception e)
+                {
+                    throw new Exception ( "Ошибка (GetCRC32) - " + e.Message + " { E50A5139 - BE9E - 453A - B9E7 - 7745EAF9704D }" );
+                }
+            }
+
+            
             public static string GetLKG ( string pathLicFile )
             {
                 try
@@ -760,10 +776,12 @@ namespace OBLibrary;
                         byte [ ] newBytes2 = Convert.FromBase64String ( licToBase );
                         var licStr = System.Text.Encoding.UTF8.GetString ( newBytes2 );
 
+                        licStr = licStr.Replace("-","");
 
                         return licStr;
                     }
-                    else { return "File-Lic-Not-Found"; } //todo уточнить что делать если файл лицензии не найден. + pathLicFile
+                    // else { return "File-Lic-Not-Found"; } //todo уточнить что делать если файл лицензии не найден. + pathLicFile
+                    else { return "0123456789ABCDEF"; } //todo уточнить что делать если файл лицензии не найден. + pathLicFile
                 }
                 catch (Exception e)
                 {
