@@ -307,6 +307,7 @@ public class Directories
     private string _aupDir = "";
     private string _sgs_ModemIniFile = "";
     private string _tcpTmrArcDir = Path.Combine(baseDirectory, "TCPTmrArc");
+    private string _tcpTmrArcDir2 = ""; //Path.Combine(baseDirectory, "TCPTmrArc2");
     private string _tcpArcDir = Path.Combine(baseDirectory, "TCPArcDir");
     private string _fastDir = "";
     private string _updateSMTDir = "";
@@ -381,6 +382,16 @@ public class Directories
         get => _tcpTmrArcDir;
         set => _tcpTmrArcDir = value;
     }
+    public bool IsTcpTmrArcDir2
+    {
+        get => !String.IsNullOrWhiteSpace(_tcpTmrArcDir2);
+       
+    }
+    public string TcpTmrArcDir2
+    {
+        get => _tcpTmrArcDir2;
+        set => _tcpTmrArcDir2 = value;
+    }
 
     public string TcpArcDir
     {
@@ -407,6 +418,8 @@ public class Directories
             // Get the property value
             object propertyValue = property.GetValue(this);
 
+            if (propertyValue is null) return;
+            
             // Display the property name and value
             // if (propertyName is "ArcDir" or "ArcDir2" or "UpdateDir" or "LogDir" or "TemplateDir" or "HelpDir" or "AupDir" or "TCPTmrArcDir" or "TCPArcDir")
             if (propertyName is "ArcDir" or "ArcDir2" or "LogDir" or "AupDir" or "TcpTmrArcDir" or "TcpArcDir")
