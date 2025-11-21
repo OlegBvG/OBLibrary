@@ -32,6 +32,7 @@ public class ConfigOptions
     public TcpArcRecordReading TcpArcRecordReading { get; set; }
     public string Lkg => lkg();
 
+    public string Submodule = "MAIN"; 
     private string lkg()
     {
         var curentD = AppContext.BaseDirectory;
