@@ -32,7 +32,9 @@ public class ConfigOptions
     public TcpArcRecordReading TcpArcRecordReading { get; set; }
     public string Lkg => lkg();
 
-    public string Submodule = "MAIN"; 
+
+    public string Submodule = "LOCAL"; 
+
     private string lkg()
     {
         var curentD = AppContext.BaseDirectory;
@@ -423,7 +425,7 @@ public class Directories
             
             // Display the property name and value
             // if (propertyName is "ArcDir" or "ArcDir2" or "UpdateDir" or "LogDir" or "TemplateDir" or "HelpDir" or "AupDir" or "TCPTmrArcDir" or "TCPArcDir")
-            if (propertyName is "ArcDir" or "ArcDir2" or "LogDir" or "AupDir" or "TcpTmrArcDir" or "TcpArcDir")
+            if (propertyName is "ArcDir" or "LogDir" or "AupDir" or "TcpTmrArcDir" or "TcpTmrArcDir2"  or "TcpArcDir")
             {
                 if (propertyValue is string dir && !string.IsNullOrEmpty(dir) && !Directory.Exists(dir))
                     Directory.CreateDirectory(dir);
