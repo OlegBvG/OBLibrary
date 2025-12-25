@@ -842,4 +842,9 @@ public class TcpArcRecordReading
     public int NewSmartTelemetryArc { get; set; } = 20;
     public int NewSmartChangeArc { get; set; } = 20;
     public int NewSmartSystemArc { get; set; } = 20;
+    
+    public int ComplexMonthArc { get; set; } = 20;
+    public int SmartMonthArc { get; set; } = 20;
+    public int NewSmartMonthArc { get; set; } = 20;
+
 }

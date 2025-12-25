@@ -212,7 +212,7 @@ public class FbService
         ExecuteSqlGetDs(string sql, CancellationToken cToken,
             string dbName = "conn") //переписано для уменьшения нагрузки на процессор, убрать коннекты
     {
-        Console.WriteLine($" sql = {sql}, dbName = {dbName}");
+        // Console.WriteLine($" sql = {sql}, dbName = {dbName}");
         try
         {
             // BlockingCollection<(string, Guid, string)> QSqlForExecuteAndGet = QSqlForExecuteAndGetConn;
@@ -252,7 +252,7 @@ public class FbService
                 
                 isGet = GetResultGuidSqlExecutedAndGet(g);
                 
-                  Console.WriteLine($" n = {n}, isGet.Item1 = {isGet.Item1}, isGet.Item2 = {isGet.Item2} ");
+                  // Console.WriteLine($" n = {n}, isGet.Item1 = {isGet.Item1}, isGet.Item2 = {isGet.Item2} ");
                                 n++;
                 
             } while (!isGet.Item1 && !cts.IsCancellationRequested && !cToken.IsCancellationRequested);
