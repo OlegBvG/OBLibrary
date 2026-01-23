@@ -1,6 +1,8 @@
 ﻿
+using System;
 using System.ComponentModel.DataAnnotations;
 using System.Data;
+using System.IO;
 using System.Reflection;
 using FirebirdSql.Data.FirebirdClient;
 using Npgsql;
