@@ -774,7 +774,44 @@ public class DatabaseConnection
         var sgsString = cs.ToString();
         return sgsString;
     }
+//*********
+    public string SgsSrvString
+    {
+        get => _sgsSrvString();
+    }
 
+    private string _sgsSrvString()
+    {
+        FbConnectionStringBuilder cs = new();
+        // ConnectDatabase=127.0.0.1/3050:C:\Connect\DB\Connect.fdb
+        cs.UserID = ServerLogin;
+        cs.Password = ServerPassword;
+        cs.Database = ServerDatabase_SRV;
+
+        if (ConnectDataSourceSgs != null)
+            cs.DataSource = ConnectDataSourceSgs;
+
+        
+        cs.Port = ConnectPortSgs;
+        //cs.Database = "127.0.0.1/3050:C:\\Connect\\DB\\Connect.fdb";
+
+        cs.Charset = ConnectCharset;
+        cs.Dialect = ConnectDialect;
+        cs.ConnectionLifeTime = ConnectConnectionLifeTime;
+        cs.MinPoolSize = ConnectMinPoolSize;
+        cs.MaxPoolSize = ConnectMaxPoolSize;
+        cs.PacketSize = ConnectPacketSize;
+
+
+        cs.Role = "";
+        cs.Pooling = ConnectPooling;
+        cs.ServerType = FbServerType.Default;
+
+        var sgsSrvString = cs.ToString();
+        return sgsSrvString;
+    }
+
+//*********
     public string TmrString
     {
         get => _tmrString();
